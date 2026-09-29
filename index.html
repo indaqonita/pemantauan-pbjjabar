@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Transparansi PBJ - Biro Pengadaan Barang dan Jasa Setda Prov. Jabar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'broken-white': '#FAF9F6',
+                        'broken-card': '#FFFFFF',
+                        'jabar-green': '#065F46',
+                        'jabar-green-light': '#10B981',
+                        'jabar-navy': '#0F172A',
+                        'jabar-gold': '#B45309',
+                        'jabar-gold-light': '#F59E0B',
+                        'sunda-accent': '#8C6239'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAF9F6;
+            color: #1E293B;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-image: radial-gradient(#E2E8F0 0.75px, transparent 0.75px);
+            background-size: 24px 24px;
+        }
+
+        /* Sunda Mega Mendung Pattern Accent */
+        .megamendung-border {
+            background-color: #065F46;
+            background-image: repeating-linear-gradient(45deg, #047857 0, #047857 10px, #065F46 10px, #065F46 20px, #0B4134 20px, #0B4134 30px);
+            position: relative;
+        }
+
+        .megamendung-pattern-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='40' viewBox='0 0 100 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 Q25 5, 50 20 T100 20 Q75 35, 50 20 T0 20 Z' fill='none' stroke='%20%23ffffff' stroke-width='1.5' stroke-opacity='0.15'/%3E%3Cpath d='M10 20 Q30 10, 50 20 T90 20' fill='none' stroke='%20%23f59e0b' stroke-width='1' stroke-opacity='0.2'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+        }
+
+        .card-sunda {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: all 0.25s ease-in-out;
+        }
+
+        .card-sunda:hover {
+            box-shadow: 0 10px 15px -3px rgba(6, 95, 70, 0.08), 0 4px 6px -2px rgba(6, 95, 70, 0.04);
+            transform: translateY(-2px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #065F46;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-900/10 shadow-sm">
+        <!-- Batik Top Strip -->
+        <div class="h-2 w-full megamendung-border megamendung-pattern-overlay"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <div class="relative flex-shrink-0">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-800 to-emerald-950 rounded-xl p-0.5 shadow-md flex items-center justify-center">
+                            <!-- Stylized Sunda Shield / Emblem Icon -->
+                            <div class="w-full h-full bg-emerald-900 rounded-[10px] flex items-center justify-center text-amber-400 relative overflow-hidden">
+                                <i class="fa-solid fa-building-columns text-xl sm:text-2xl relative z-10"></i>
+                                <span class="absolute -bottom-1 -right-1 text-emerald-800 opacity-40 font-bold text-xs">JABAR</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300 rounded-full flex items-center gap-1">
+                                <i class="fa-solid fa-leaf text-[9px]"></i> Portal Publik Jabar
+                            </span>
+                            <span class="hidden md:inline-block text-xs text-slate-500 font-medium">| Tahun Anggaran 2026</span>
+                        </div>
+                        <h1 class="text-base sm:text-lg lg:text-xl font-extrabold text-slate-900 leading-tight">
+                            Biro Pengadaan Barang & Jasa <span class="text-emerald-700 hidden sm:inline">Setda Prov. Jabar</span>
+                        </h1>
+                        <p class="text-xs text-slate-500 hidden sm:block">Transparansi & Akuntabilitas Pengelolaan Pengadaan Barang/Jasa Pemerintah Provinsi Jawa Barat</p>
+                    </div>
+                </div>
+
+                <!-- Right Action / Info -->
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs sm:text-sm font-semibold shadow-sm transition">
+                        <i class="fa-solid fa-file-csv text-amber-300"></i>
+                        <span class="hidden sm:inline">Unduh</span> Data (CSV)
+                    </button>
+                    <a href="#tabel-paket" class="p-2 sm:px-3 sm:py-2 text-slate-700 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 border border-slate-200 rounded-lg text-xs sm:text-sm font-medium transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span class="hidden md:inline">Cari Paket</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-8 flex-grow">
+
+        <!-- HERO / MOTTO BANNER -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-900 via-emerald-800 to-slate-900 text-white p-6 sm:p-8 shadow-lg border border-amber-500/20">
+            <!-- Background Mega Mendung Motif SVG overlay -->
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="megamendung-hero" width="120" height="60" patternUnits="userSpaceOnUse">
+                            <path d="M0,30 Q30,5 60,30 T120,30 Q90,55 60,30 T0,30 Z" fill="none" stroke="#ffffff" stroke-width="2"/>
+                            <path d="M15,30 Q40,15 60,30 T105,30" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+                            <path d="M30,30 Q50,22 60,30 T90,30" fill="none" stroke="#ffffff" stroke-width="1"/>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#megamendung-hero)" />
+                </svg>
+            </div>
+
+            <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-950/60 border border-amber-400/40 rounded-full text-amber-300 text-xs font-semibold">
+                        <i class="fa-solid fa-certificate"></i> Gemah Ripah Rapi Tahi
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                        Dashboard Pengadaan Barang & Jasa 2026
+                    </h2>
+                    <p class="text-sm text-emerald-100/90 leading-relaxed">
+                        Pantau realisasi pengadaan, status tender, efisiensi anggaran, dan keterbukaan informasi publik PBJ Sekretariat Daerah Provinsi Jawa Barat secara aktual.
+                    </p>
+                </div>
+
+                <!-- Highlight Total Pagu Card inside Hero -->
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 sm:p-5 text-right min-w-[260px] flex flex-col justify-center">
+                    <span class="text-xs font-medium text-emerald-200 uppercase tracking-wider block mb-1">Total Usulan Pagu Anggaran</span>
+                    <div class="text-2xl sm:text-3xl font-black text-amber-300 tracking-tight">
+                        Rp 457.44 M
+                    </div>
+                    <div class="text-xs text-white/80 font-medium mt-1 flex items-center justify-end gap-1">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="font-bold text-white">208 Paket Pekerjaan</span> Terdata
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 1: RINGKASAN STATUS PAKET (4 PILAR STATUS) -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-2 h-6 bg-emerald-700 rounded-full inline-block"></span>
+                    Ringkasan Status Paket Pengadaan
+                </h3>
+                <span class="text-xs text-slate-500 font-medium"><i class="fa-solid fa-arrows-rotate mr-1"></i> Update: Data 'Paket 2026 0915'</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <!-- 1. Belum Proses -->
+                <div class="card-sunda rounded-xl p-5 border-l-4 border-l-slate-400 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Belum Proses</span>
+                            <h4 class="text-xs font-medium text-slate-400">Tahap Kaji Ulang</h4>
+                        </div>
+                        <span class="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-clock"></i>
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span class="text-3xl font-extrabold text-slate-800">3</span>
+                        <span class="text-xs font-semibold text-slate-500">Paket</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-700 bg-slate-50 px-2 py-1 rounded border border-slate-200 inline-block mb-3">
+                        Rp 2.966.639.630
+                    </p>
+                    <div class="border-t border-slate-100 pt-2 space-y-1 text-[11px] text-slate-600">
+                        <div class="flex justify-between"><span>Reguler:</span> <span class="font-semibold text-slate-800">3 Pkt (Rp 2.96 M)</span></div>
+                        <div class="flex justify-between"><span>Strategis:</span> <span class="font-semibold text-slate-400">0 Pkt (Rp 0)</span></div>
+                    </div>
+                </div>
+
+                <!-- 2. Proses (Tayang) -->
+                <div class="card-sunda rounded-xl p-5 border-l-4 border-l-amber-500 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="text-xs font-bold text-amber-700 uppercase tracking-wider block">Proses</span>
+                            <h4 class="text-xs font-medium text-amber-600">Sedang Tayang</h4>
+                        </div>
+                        <span class="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-spinner animate-spin"></i>
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span class="text-3xl font-extrabold text-amber-800">5</span>
+                        <span class="text-xs font-semibold text-amber-600">Paket</span>
+                    </div>
+                    <p class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded border border-amber-200 inline-block mb-3">
+                        Rp 1.965.647.000
+                    </p>
+                    <div class="border-t border-slate-100 pt-2 space-y-1 text-[11px] text-slate-600">
+                        <div class="flex justify-between"><span>Reguler:</span> <span class="font-semibold text-slate-800">5 Pkt (Rp 1.96 M)</span></div>
+                        <div class="flex justify-between"><span>Strategis:</span> <span class="font-semibold text-slate-400">0 Pkt (Rp 0)</span></div>
+                    </div>
+                </div>
+
+                <!-- 3. Selesai -->
+                <div class="card-sunda rounded-xl p-5 border-l-4 border-l-emerald-600 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="text-xs font-bold text-emerald-800 uppercase tracking-wider block">Selesai</span>
+                            <h4 class="text-xs font-medium text-emerald-600">Ter-penetapan SPPBJ</h4>
+                        </div>
+                        <span class="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span class="text-3xl font-extrabold text-emerald-900">186</span>
+                        <span class="text-xs font-semibold text-emerald-700">Paket</span>
+                    </div>
+                    <p class="text-xs font-bold text-emerald-900 bg-emerald-50 px-2 py-1 rounded border border-emerald-200 inline-block mb-3">
+                        Rp 351.340.685.640
+                    </p>
+                    <div class="border-t border-slate-100 pt-2 space-y-1 text-[11px] text-slate-600">
+                        <div class="flex justify-between"><span>Reguler:</span> <span class="font-semibold text-slate-800">185 Pkt (Rp 201.34 M)</span></div>
+                        <div class="flex justify-between"><span>Strategis:</span> <span class="font-semibold text-emerald-800">1 Pkt (Rp 150.00 M)</span></div>
+                    </div>
+                </div>
+
+                <!-- 4. Batal -->
+                <div class="card-sunda rounded-xl p-5 border-l-4 border-l-rose-500 relative overflow-hidden">
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="text-xs font-bold text-rose-700 uppercase tracking-wider block">Batal</span>
+                            <h4 class="text-xs font-medium text-rose-500">Tender/Seleksi Batal</h4>
+                        </div>
+                        <span class="w-9 h-9 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-sm font-bold">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-2 mb-2">
+                        <span class="text-3xl font-extrabold text-rose-800">14</span>
+                        <span class="text-xs font-semibold text-rose-600">Paket</span>
+                    </div>
+                    <p class="text-xs font-bold text-rose-800 bg-rose-50 px-2 py-1 rounded border border-rose-200 inline-block mb-3">
+                        Rp 101.167.802.473
+                    </p>
+                    <div class="border-t border-slate-100 pt-2 space-y-1 text-[11px] text-slate-600">
+                        <div class="flex justify-between"><span>Reguler:</span> <span class="font-semibold text-slate-800">13 Pkt (Rp 53.43 M)</span></div>
+                        <div class="flex justify-between"><span>Strategis:</span> <span class="font-semibold text-rose-800">1 Pkt (Rp 47.72 M)</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECTION 2: EFISIENSI ANGGARAN & POHON STATUS KHUSUS -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- EFISIENSI ANGGARAN CARD (2 Cols) -->
+            <div class="lg:col-span-2 card-sunda rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between">
+                <!-- Watermark Background -->
+                <div class="absolute right-0 bottom-0 opacity-5 pointer-events-none transform translate-x-6 translate-y-6">
+                    <i class="fa-solid fa-piggy-bank text-9xl text-emerald-900"></i>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+                                <i class="fa-solid fa-chart-pie"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900">Efisiensi Pengadaan Barang & Jasa</h3>
+                                <p class="text-xs text-slate-500">Perhitungan Penghematan Anggaran Dari Paket Selesai</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-extrabold border border-emerald-300">
+                            17.36% Penghematan
+                        </span>
+                    </div>
+
+                    <!-- Visual Comparison Bar -->
+                    <div class="bg-slate-100 rounded-xl p-4 mb-5 border border-slate-200 space-y-3">
+                        <div class="flex justify-between text-xs font-semibold">
+                            <span class="text-slate-600">Komposisi Realisasi vs Hemat</span>
+                            <span class="text-emerald-800">Total Selesai: Rp 350.95 M</span>
+                        </div>
+
+                        <div class="h-5 w-full bg-slate-200 rounded-full overflow-hidden flex shadow-inner">
+                            <div class="bg-emerald-600 text-[10px] font-bold text-white flex items-center justify-center transition-all duration-500" style="width: 82.64%">
+                                Penawaran (82.64%)
+                            </div>
+                            <div class="bg-amber-500 text-[10px] font-bold text-slate-900 flex items-center justify-center transition-all duration-500" style="width: 17.36%">
+                                Hemat (17.36%)
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between text-[11px] text-slate-500 pt-1">
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Nilai Penawaran Kontrak</span>
+                            <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Efisiensi Kas Daerah</span>
+                        </div>
+                    </div>
+
+                    <!-- 3 Grid Numeric Breakdowns -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-[11px] text-slate-500 block">Pagu Paket Selesai</span>
+                            <span class="text-sm sm:text-base font-bold text-slate-800">Rp 350.95 M</span>
+                            <span class="text-[10px] text-slate-400 block mt-0.5">Rp 350.951.912.010</span>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-[11px] text-slate-500 block">Nilai Penawaran</span>
+                            <span class="text-sm sm:text-base font-bold text-emerald-700">Rp 267.46 M</span>
+                            <span class="text-[10px] text-slate-400 block mt-0.5">Rp 267.461.598.906</span>
+                        </div>
+                        <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200">
+                            <span class="text-[11px] text-emerald-800 font-semibold block">Efisiensi Anggaran</span>
+                            <span class="text-sm sm:text-base font-black text-amber-700">Rp 83.49 M</span>
+                            <span class="text-[10px] text-emerald-700 block mt-0.5">Rp 83.490.313.004</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                    <span><i class="fa-solid fa-shield-halved text-emerald-700 mr-1"></i> Penghematan bermanfaat untuk percepatan pembangunan Jabar</span>
+                </div>
+            </div>
+
+            <!-- POHON STATUS KHUSUS CARD (1 Col) -->
+            <div class="card-sunda rounded-2xl p-6 flex flex-col justify-between border-t-4 border-t-amber-600">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-sitemap"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">Pohon Status Khusus</h3>
+                            <p class="text-xs text-slate-500">Kategori Paket Prioritas & DPA</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Pra DPA -->
+                        <div class="p-3.5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="w-9 h-9 rounded-lg bg-amber-200/70 text-amber-900 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-800">Paket Pra DPA</h4>
+                                    <p class="text-[11px] text-slate-500">Persiapan Sebelum DPA Aktif</p>
+                                </div>
+                            </div>
+                            <span class="text-lg font-black text-amber-900 bg-white px-3 py-1 rounded-lg border border-amber-200 shadow-sm">
+                                54
+                            </span>
+                        </div>
+
+                        <!-- Strategis -->
+                        <div class="p-3.5 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200/80 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="w-9 h-9 rounded-lg bg-emerald-200/70 text-emerald-900 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-star"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-800">Paket Strategis</h4>
+                                    <p class="text-[11px] text-slate-500">Proyek Strategis Daerah</p>
+                                </div>
+                            </div>
+                            <span class="text-lg font-black text-emerald-900 bg-white px-3 py-1 rounded-lg border border-emerald-200 shadow-sm">
+                                2
+                            </span>
+                        </div>
+
+                        <!-- DAK -->
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <span class="w-9 h-9 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-700">Paket DAK</h4>
+                                    <p class="text-[11px] text-slate-400">Dana Alokasi Khusus</p>
+                                </div>
+                            </div>
+                            <span class="text-lg font-black text-slate-500 bg-white px-3 py-1 rounded-lg border border-slate-200">
+                                0
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-100 text-center">
+                    <span class="text-[11px] text-slate-400">Pemantauan Khusus oleh Tim Pengawasan Jabar</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SECTION 3: VISUALISASI GRAFIK CHARTS (OPD, JENIS PENGADAAN, METODE PEMILIHAN) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- OPD DISTRIBUTION CHART (7 Cols) -->
+            <div class="lg:col-span-7 card-sunda rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-building-user text-emerald-700"></i> Paket Berdasarkan Perangkat Daerah (OPD)
+                            </h3>
+                            <p class="text-xs text-slate-500">Sebaran 208 Paket Usulan pada 18 Instansi Pemprov Jabar</p>
+                        </div>
+                        <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+                            18 OPD
+                        </span>
+                    </div>
+
+                    <!-- Canvas Horizontal Chart -->
+                    <div class="relative h-[340px] w-full">
+                        <canvas id="opdChart"></canvas>
+                    </div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-3 text-center border-t border-slate-100 pt-2">
+                    *Dinas Bina Marga dan Penataan Ruang mengelola usulan paket terbanyak (103 Paket).
+                </p>
+            </div>
+
+            <!-- JENIS PENGADAAN & METODE PEMILIHAN CHARTS (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6 flex flex-col justify-between">
+
+                <!-- Jenis Pengadaan -->
+                <div class="card-sunda rounded-2xl p-5 flex-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-packing text-amber-600"></i> Jenis Pengadaan
+                        </h4>
+                        <span class="text-[11px] font-semibold text-slate-500">Total 208 Paket</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                        <div class="relative h-[130px] flex items-center justify-center">
+                            <canvas id="jenisChart"></canvas>
+                        </div>
+                        <div class="space-y-1.5 text-xs">
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-700"></span> Jasa Konsultansi
+                                </span>
+                                <span class="font-bold text-slate-900">201</span>
+                            </div>
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Pekerjaan Konstruksi
+                                </span>
+                                <span class="font-bold text-slate-900">4</span>
+                            </div>
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Jasa Lainnya
+                                </span>
+                                <span class="font-bold text-slate-900">2</span>
+                            </div>
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Barang
+                                </span>
+                                <span class="font-bold text-slate-900">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metode Pemilihan -->
+                <div class="card-sunda rounded-2xl p-5 flex-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-emerald-700"></i> Metode Pemilihan
+                        </h4>
+                        <span class="text-[11px] font-semibold text-slate-500">5 Kategori</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+                        <div class="relative h-[130px] flex items-center justify-center">
+                            <canvas id="metodeChart"></canvas>
+                        </div>
+                        <div class="space-y-1.5 text-xs">
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-800"></span> Seleksi
+                                </span>
+                                <span class="font-bold text-slate-900">196</span>
+                            </div>
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-600"></span> Tender
+                                </span>
+                                <span class="font-bold text-slate-900">5</span>
+                            </div>
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Penunjukan Langsung
+                                </span>
+                                <span class="font-bold text-slate-900">4</span>
+                            </div>
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span> Tender Cepat
+                                </span>
+                                <span class="font-bold text-slate-900">2</span>
+                            </div>
+                            <div class="flex justify-between items-center p-1.5 rounded bg-slate-50 border border-slate-100">
+                                <span class="flex items-center gap-1.5 font-medium text-slate-700">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> Dikecualikan
+                                </span>
+                                <span class="font-bold text-slate-900">1</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- SECTION 4: TABEL PAKET PENGADAAN PUBLIK (INTERAKTIF) -->
+        <section id="tabel-paket" class="card-sunda rounded-2xl p-6 space-y-5">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-700"></i> Rincian Paket Pengadaan Publik
+                    </h3>
+                    <p class="text-xs text-slate-500">Gunakan pencarian dan filter untuk menelusuri data paket PBJ Pemprov Jabar</p>
+                </div>
+
+                <!-- Filter & Search Inputs -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Search Input -->
+                    <div class="relative min-w-[200px] flex-1 sm:flex-initial">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="searchInput" oninput="filterTable()" placeholder="Cari nama paket/kode..." class="w-full pl-8 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:bg-white transition">
+                    </div>
+
+                    <!-- OPD Filter -->
+                    <select id="opdFilter" onchange="filterTable()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition">
+                        <option value="">Semua Perangkat Daerah (OPD)</option>
+                        <option value="Dinas Bina Marga dan Penataan Ruang">Dinas Bina Marga & Penataan Ruang</option>
+                        <option value="Dinas Perumahan dan Permukiman">Dinas Perumahan & Permukiman</option>
+                        <option value="Dinas Perhubungan">Dinas Perhubungan</option>
+                        <option value="Dinas Sumber Daya Air">Dinas Sumber Daya Air</option>
+                        <option value="Biro Umum">Biro Umum Setda</option>
+                        <option value="Dinas Kesehatan">Dinas Kesehatan</option>
+                    </select>
+
+                    <!-- Status Filter -->
+                    <select id="statusFilter" onchange="filterTable()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-600 transition">
+                        <option value="">Semua Status</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Proses">Proses (Tayang)</option>
+                        <option value="Belum Proses">Belum Proses</option>
+                        <option value="Batal">Batal</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100/80 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
+                            <th class="p-3">Kode / ID</th>
+                            <th class="p-3">Nama Paket Pekerjaan</th>
+                            <th class="p-3">Perangkat Daerah (OPD)</th>
+                            <th class="p-3">Jenis / Metode</th>
+                            <th class="p-3 text-right">Pagu (Rp)</th>
+                            <th class="p-3 text-center">Status</th>
+                            <th class="p-3 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 bg-white">
+                        <!-- Dynamic Rows Injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Table Pagination & Counter Footer -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 pt-2">
+                <div>
+                    Menampilkan <span id="showingCount" class="font-bold text-slate-800">0</span> dari <span id="totalCount" class="font-bold text-slate-800">208</span> Paket Usulan
+                </div>
+                <div class="flex items-center gap-1">
+                    <button class="px-3 py-1 bg-slate-100 rounded text-slate-600 hover:bg-slate-200 disabled:opacity-50" disabled>Sebelumnya</button>
+                    <button class="px-3 py-1 bg-emerald-700 text-white rounded font-bold">1</button>
+                    <button class="px-3 py-1 bg-slate-100 rounded text-slate-600 hover:bg-slate-200">2</button>
+                    <button class="px-3 py-1 bg-slate-100 rounded text-slate-600 hover:bg-slate-200">Selanjutnya</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DETAIL PAKET -->
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-emerald-900/20 transform transition-all">
+            <!-- Modal Header with Sunda Accent -->
+            <div class="megamendung-border p-4 text-white relative">
+                <button onclick="closeModal()" class="absolute right-4 top-4 text-white/80 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <span class="text-[10px] uppercase font-bold text-amber-300 tracking-wider block">Rincian Paket PBJ Jabar</span>
+                <h3 id="modalTitle" class="text-base font-bold pr-6">Nama Paket Pekerjaan</h3>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-5 space-y-4 text-xs text-slate-700">
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">KODE PAKET</span>
+                        <span id="modalKode" class="font-bold text-slate-800">PKT-2026-001</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 block text-[10px]">STATUS TENDER</span>
+                        <span id="modalStatus" class="font-bold text-emerald-700">Selesai</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="text-slate-500">Perangkat Daerah (OPD):</span>
+                        <span id="modalOPD" class="font-semibold text-slate-800 text-right">Dinas Bina Marga</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="text-slate-500">Jenis Pengadaan:</span>
+                        <span id="modalJenis" class="font-semibold text-slate-800">Jasa Konsultansi</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="text-slate-500">Metode Pemilihan:</span>
+                        <span id="modalMetode" class="font-semibold text-slate-800">Seleksi</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="text-slate-500">Pagu Anggaran:</span>
+                        <span id="modalPagu" class="font-bold text-slate-900">Rp 1.500.000.000</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="text-slate-500">Penawaran Pemenang:</span>
+                        <span id="modalPenawaran" class="font-bold text-emerald-700">Rp 1.250.000.000</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1">
+                        <span class="text-slate-500">Kategori Khusus:</span>
+                        <span id="modalKhusus" class="font-semibold text-amber-700">Pra DPA</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-slate-50 p-4 border-t border-slate-200 flex justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-semibold text-xs transition">
+                    Tutup Detail
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER WITH SUNDANESE PATTERN -->
+    <footer class="mt-12 bg-emerald-950 text-emerald-100 border-t-4 border-amber-500 relative overflow-hidden">
+        <div class="megamendung-pattern-overlay h-3 opacity-30"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+                <div class="space-y-1">
+                    <div class="flex items-center justify-center md:justify-start gap-2 text-white font-bold text-sm">
+                        <i class="fa-solid fa-gem text-amber-400"></i> Biro Pengadaan Barang dan Jasa Setda Provinsi Jawa Barat
+                    </div>
+                    <p class="text-xs text-emerald-300/80">Gedung Sate, Jl. Diponegoro No.22, Citarum, Bandung, Jawa Barat 40115</p>
+                </div>
+                <div class="text-xs text-emerald-200/70 space-y-1">
+                    <p>© 2026 Pemerintah Daerah Provinsi Jawa Barat.</p>
+                    <p class="italic text-[11px] text-amber-300">"Sarendeuh Saigel, Sabobot Sapihanean, Gemah Ripah Loh Jinawi"</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // DATA SAMPLE BASED ON 'Paket Pekerjaan 2026 0915' (208 Total Packages)
+        const mockPackages = [
+            { kode: 'PKT-001', nama: 'Pengawasan Teknis Peningkatan Jalan Wilayah I', opd: 'Dinas Bina Marga dan Penataan Ruang', jenis: 'Jasa Konsultansi', metode: 'Seleksi', pagu: 1500000000, penawaran: 1210000000, status: 'Selesai', khusus: 'Pra DPA' },
+            { kode: 'PKT-002', nama: 'Perencanaan Rehabilitasi Jembatan Sungai Citarum', opd: 'Dinas Bina Marga dan Penataan Ruang', jenis: 'Jasa Konsultansi', metode: 'Seleksi', pagu: 850000000, penawaran: 690000000, status: 'Selesai', khusus: 'Reguler' },
+            { kode: 'PKT-003', nama: 'Pembangunan Gedung Kantor UPTD Wilayah III', opd: 'Dinas Perumahan dan Permukiman', jenis: 'Pekerjaan Konstruksi', metode: 'Tender', pagu: 150000000000, penawaran: 120000000000, status: 'Selesai', khusus: 'Strategis' },
+            { kode: 'PKT-004', nama: 'Kajian Manajemen Lalu Lintas Kawasan Metropolitan Bandung', opd: 'Dinas Perhubungan', jenis: 'Jasa Konsultansi', metode: 'Seleksi', pagu: 450000000, penawaran: 0, status: 'Proses', khusus: 'Pra DPA' },
+            { kode: 'PKT-005', nama: 'Pengawasan Pembangunan Embung Desa Garut', opd: 'Dinas Sumber Daya Air', jenis: 'Jasa Konsultansi', metode: 'Seleksi', pagu: 600000000, penawaran: 0, status: 'Belum Proses', khusus: 'Reguler' },
+            { kode: 'PKT-006', nama: 'Penyediaan Jasa Kebersihan Gedung Sate', opd: 'Biro Umum', jenis: 'Jasa Lainnya', metode: 'Tender Cepat', pagu: 1200000000, penawaran: 980000000, status: 'Selesai', khusus: 'Reguler' },
+            { kode: 'PKT-007', nama: 'Pengadaan Alat Kesehatan RSUD Al-Ihsan', opd: 'Dinas Kesehatan', jenis: 'Barang', metode: 'Penunjukan Langsung', pagu: 2500000000, penawaran: 0, status: 'Batal', khusus: 'Strategis' },
+            { kode: 'PKT-008', nama: 'Perencanaan Sistem Irigasi Wilayah Cirebon', opd: 'Dinas Sumber Daya Air', jenis: 'Jasa Konsultansi', metode: 'Seleksi', pagu: 750000000, penawaran: 610000000, status: 'Selesai', khusus: 'Pra DPA' },
+            { kode: 'PKT-009', nama: 'Supervisi Peningkatan Jalan Subang - Pamanukan', opd: 'Dinas Bina Marga dan Penataan Ruang', jenis: 'Jasa Konsultansi', metode: 'Seleksi', pagu: 2100000000, penawaran: 1720000000, status: 'Selesai', khusus: 'Pra DPA' },
+            { kode: 'PKT-010', nama: 'Kajian Kelayakan Pelabuhan Perikanan Sukabumi', opd: 'Dinas Kelautan dan Perikanan', jenis: 'Jasa Konsultansi', metode: 'Seleksi', pagu: 350000000, penawaran: 290000000, status: 'Selesai', khusus: 'Reguler' }
+        ];
+
+        // Format Currency Helper
+        function formatIDR(amount) {
+            if (amount === 0) return 'Rp 0';
+            return 'Rp ' + amount.toLocaleString('id-ID');
+        }
+
+        // Render Data Table
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            data.forEach(item => {
+                let statusBadge = '';
+                if (item.status === 'Selesai') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200"><i class="fa-solid fa-check mr-1"></i>Selesai</span>`;
+                } else if (item.status === 'Proses') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200"><i class="fa-solid fa-spinner animate-spin mr-1"></i>Proses</span>`;
+                } else if (item.status === 'Belum Proses') {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200"><i class="fa-solid fa-clock mr-1"></i>Belum Proses</span>`;
+                } else {
+                    statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200"><i class="fa-solid fa-xmark mr-1"></i>Batal</span>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-600">${item.kode}</td>
+                    <td class="p-3">
+                        <div class="font-bold text-slate-800">${item.nama}</div>
+                        ${item.khusus !== 'Reguler' ? `<span class="text-[9px] font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.2 rounded">${item.khusus}</span>` : ''}
+                    </td>
+                    <td class="p-3 text-slate-600">${item.opd}</td>
+                    <td class="p-3 text-slate-500">${item.jenis} <span class="text-slate-300">•</span> ${item.metode}</td>
+                    <td class="p-3 text-right font-extrabold text-slate-900">${formatIDR(item.pagu)}</td>
+                    <td class="p-3 text-center">${statusBadge}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="openModal('${item.kode}')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded text-[11px] font-semibold transition">
+                            Detail
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('showingCount').innerText = data.length;
+        }
+
+        // Filter Table Logic
+        function filterTable() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const opdValue = document.getElementById('opdFilter').value;
+            const statusValue = document.getElementById('statusFilter').value;
+
+            const filtered = mockPackages.filter(item => {
+                const matchesSearch = item.nama.toLowerCase().includes(searchValue) || item.kode.toLowerCase().includes(searchValue);
+                const matchesOPD = opdValue === '' || item.opd === opdValue;
+                const matchesStatus = statusValue === '' || item.status === statusValue;
+
+                return matchesSearch && matchesOPD && matchesStatus;
+            });
+
+            renderTable(filtered);
+        }
+
+        // Modal Functions
+        function openModal(kode) {
+            const pkg = mockPackages.find(p => p.kode === kode);
+            if (!pkg) return;
+
+            document.getElementById('modalTitle').innerText = pkg.nama;
+            document.getElementById('modalKode').innerText = pkg.kode;
+            document.getElementById('modalStatus').innerText = pkg.status;
+            document.getElementById('modalOPD').innerText = pkg.opd;
+            document.getElementById('modalJenis').innerText = pkg.jenis;
+            document.getElementById('modalMetode').innerText = pkg.metode;
+            document.getElementById('modalPagu').innerText = formatIDR(pkg.pagu);
+            document.getElementById('modalPenawaran').innerText = pkg.penawaran > 0 ? formatIDR(pkg.penawaran) : 'Belum Ada Penawaran';
+            document.getElementById('modalKhusus').innerText = pkg.khusus;
+
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        // Export to CSV Function
+        function exportToCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Kode,Nama Paket,OPD,Jenis Pengadaan,Metode Pemilihan,Pagu (Rp),Status\n";
+
+            mockPackages.forEach(p => {
+                csvContent += `"${p.kode}","${p.nama}","${p.opd}","${p.jenis}","${p.metode}",${p.pagu},"${p.status}"\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Data_Pengadaan_PBJ_Jabar_2026.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = function() {
+            renderTable(mockPackages);
+
+            // 1. OPD Horizontal Bar Chart
+            const ctxOPD = document.getElementById('opdChart').getContext('2d');
+            new Chart(ctxOPD, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Dinas Bina Marga & Penataan Ruang',
+                        'Dinas Perumahan & Permukiman',
+                        'Dinas Perhubungan',
+                        'Dinas Sumber Daya Air',
+                        'Biro Umum',
+                        'Dinas Kesehatan',
+                        'Dinas Kelautan & Perikanan',
+                        'Sekretariat DPRD',
+                        'Dinas Lingkungan Hidup',
+                        'Dinas Tanaman Pangan & Hortikultura',
+                        'Dinas Sosial',
+                        'Dinas ESDM',
+                        'Lainnya (BPKAD, BPBD, DLL)'
+                    ],
+                    datasets: [{
+                        label: 'Jumlah Paket',
+                        data: [103, 29, 14, 13, 11, 10, 6, 5, 4, 3, 2, 2, 6],
+                        backgroundColor: '#065F46',
+                        hoverBackgroundColor: '#047857',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#F1F5F9' },
+                            ticks: { font: { family: 'Plus Jakarta Sans', size: 10 } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Plus Jakarta Sans', size: 10, weight: '600' } }
+                        }
+                    }
+                }
+            });
+
+            // 2. Jenis Pengadaan Chart (Donut)
+            const ctxJenis = document.getElementById('jenisChart').getContext('2d');
+            new Chart(ctxJenis, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Jasa Konsultansi', 'Pekerjaan Konstruksi', 'Jasa Lainnya', 'Barang'],
+                    datasets: [{
+                        data: [201, 4, 2, 1],
+                        backgroundColor: ['#065F46', '#F59E0B', '#3B82F6', '#94A3B8'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '70%'
+                }
+            });
+
+            // 3. Metode Pemilihan Chart (Doughnut)
+            const ctxMetode = document.getElementById('metodeChart').getContext('2d');
+            new Chart(ctxMetode, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Seleksi', 'Tender', 'Penunjukan Langsung', 'Tender Cepat', 'Dikecualikan'],
+                    datasets: [{
+                        data: [196, 5, 4, 2, 1],
+                        backgroundColor: ['#065F46', '#D97706', '#6366F1', '#06B6D4', '#94A3B8'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '70%'
+                }
+            });
+        };
+    </script>
+</body>
+</html>
